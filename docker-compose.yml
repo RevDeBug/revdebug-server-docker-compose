@@ -1,0 +1,85 @@
+version: '3.0'
+services:
+  postgres:
+    image: postgres:11
+    volumes:
+        - ${REVDEBUG_VOLUME_PATH:-/var/revdebug/server/repo}/revdebug_database:/var/lib/postgresql/data
+    environment:
+            POSTGRES_USER: ${REVDEBUG_POSTGRES_USER:-rdb_user}
+            POSTGRES_PASSWORD: ${REVDEBUG_POSTGRES_PASSWORD:-masterkey}
+            POSTGRES_DB: ${REVDEBUG_POSTGRES_DATABASE:-revdebug_db}
+  devops:
+    image: docker.revdebug.com/devops:latest
+    volumes:
+        - interop:/interop
+        - ${REVDEBUG_VOLUME_PATH:-/var/revdebug/server/repo}:/app/RevDeBug
+        - ${REVDEBUG_VOLUME_CAPATH:-/var/revdebug/ca}:/usr/local/share/ca-certificates:ro
+    environment:
+            REVDEBUG_AUTH: ${REVDEBUG_AUTH}
+            REVDEBUG_POSTGRES_SERVER: ${REVDEBUG_POSTGRES_SERVER:-postgres}
+            REVDEBUG_POSTGRES_PORT: ${REVDEBUG_POSTGRES_PORT:-5432}
+            REVDEBUG_POSTGRES_USER: ${REVDEBUG_POSTGRES_USER:-rdb_user}
+            REVDEBUG_POSTGRES_PASSWORD: ${REVDEBUG_POSTGRES_PASSWORD:-masterkey}
+            REVDEBUG_POSTGRES_DATABASE: ${REVDEBUG_POSTGRES_DATABASE:-revdebug_db}
+            REVDEBUG_APM_BY_DEFAULT: ${REVDEBUG_APM_BY_DEFAULT:-true}            
+  apm-oap:
+    image: docker.revdebug.com/apm-oap:latest
+    volumes:
+        - interop:/interop
+    environment:
+            SW_STORAGE: postgres
+            SW_DATA_SOURCE_USER: ${REVDEBUG_POSTGRES_USER:-rdb_user}
+            SW_DATA_SOURCE_PASSWORD: ${REVDEBUG_POSTGRES_PASSWORD:-masterkey}
+            SW_DATA_SOURCE_SERVER_NAME: ${REVDEBUG_POSTGRES_SERVER:-postgres}
+            SW_DATA_SOURCE_PORT_NUMBER: ${REVDEBUG_POSTGRES_PORT:-5432}
+            SW_DATA_SOURCE_DATABASE: ${REVDEBUG_POSTGRES_DATABASE:-revdebug_db}
+            SW_DATA_SOURCE_STRING_TYPE: varchar
+  apm-ui:
+    image: docker.revdebug.com/apm-ui:latest
+    volumes:
+        - interop:/interop
+    environment:
+            SW_OAP_ADDRESS: oap.apm:12800
+            SERVER_maxHttpHeaderSize: 640000
+    depends_on:
+        - apm-oap
+    links:
+        - "apm-oap:oap.apm"
+  wsproxy:
+    image: docker.revdebug.com/wsproxy:210218
+    environment:
+            WSPROXY_CONNECT_HOST: devops
+            WSPROXY_APM_HOST: oap.apm
+    links:
+        - "apm-oap:oap.apm"
+        - "devops:devops"
+  nginx:
+    image: docker.revdebug.com/nginx:latest
+    ports:
+#         - "${REVDEBUG_LEGACY_SERVER_PORT:-5000}:80"
+        - "${REVDEBUG_SERVER_PORT:-80}:80"
+        - "${REVDEBUG_SERVER_SSL_PORT:-443}:443"
+        - "${REVDEBUG_SERVER_GRPC_PORT:-11800}:11800"
+        - "${REVDEBUG_RECORDERS_PORT:-42733}:42733"
+        - "${REVDEBUG_APPLICATIONS_PORT:-42734}:42734"
+        - "${REVDEBUG_GRPC_PORT:-42735}:42735"
+    volumes:
+        - interop:/interop
+        - ${REVDEBUG_ROOTVOLUME_PATH:-/var/revdebug}/nginx:/var/log/nginx
+        - ${REVDEBUG_CERTIFICATE_PATH:-/var/revdebug/cert}:/ssl
+        - ${REVDEBUG_UAC_FILE:-./uac}:/uac:ro
+    environment:
+            CERTIFICATE_NAME: ${REVDEBUG_CERTIFICATE_NAME}
+            KEEP_ACCESS_LOGS: ${REVDEBUG_KEEP_ACCESS_LOGS:-false}
+            SERVER_NAME: ${REVDEBUG_SERVER_NAME}
+            SERVER_SSL_PORT: ${REVDEBUG_SERVER_SSL_PORT:-443}
+            SERVER_PORT: ${REVDEBUG_SERVER_PORT:-80}
+    depends_on:
+        - apm-ui
+        - apm-oap
+        - devops
+    links:
+        - "apm-oap:oap.apm"
+        - "apm-ui:ui.apm"
+volumes:
+  interop:

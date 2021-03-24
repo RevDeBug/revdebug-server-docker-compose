@@ -1,0 +1,6 @@
+# local environment file
+.env
+# auto generated files during server startup
+uac
+# backup files
+*~
