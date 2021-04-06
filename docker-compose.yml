@@ -14,6 +14,7 @@ services:
         - interop:/interop
         - ${REVDEBUG_VOLUME_PATH:-/var/revdebug/server/repo}:/app/RevDeBug
         - ${REVDEBUG_VOLUME_CAPATH:-/var/revdebug/ca}:/usr/local/share/ca-certificates:ro
+        - ${REVDEBUG_VOLUME_GIT_SSH_KEYS:-/var/revdebug/git-ssh-key-dir}:/git-ssh-key-dir
     environment:
             REVDEBUG_AUTH: ${REVDEBUG_AUTH}
             REVDEBUG_POSTGRES_SERVER: ${REVDEBUG_POSTGRES_SERVER:-postgres}
