@@ -2,14 +2,30 @@
 # 
 version: '3.0'
 services:
+services:
+  mediainit:
+    image: alpine
+    entrypoint: 
+      - /bin/sh
+      - -c 
+      - "mkdir -p /var/revdebug/keycloak && chown 1000: /var/revdebug/keycloak"
+    container_name: mediainit
+    restart: "no"
+    volumes: 
+        - ${REVDEBUG_ROOTVOLUME_PATH:-/var/revdebug}:/var/revdebug  
   keycloak:
-    image: jboss/keycloak
-    ports:
-        - 8080:8080
+    image: docker.revdebug.com/keycloak:latest
+    volumes:
+        - ${REVDEBUG_ROOTVOLUME_PATH:-/var/revdebug}/keycloak:/var/keycloak-config/cfg  
     environment:
+            REVDEBUG_CERTIFICATE_NAME: ${REVDEBUG_CERTIFICATE_NAME:-}
+            REVDEBUG_SERVER_NAME: ${REVDEBUG_SERVER_NAME:-}
+            REVDEBUG_AUTH_OPENID_SECRET: ${REVDEBUG_AUTH_OPENID_SECRET:-change_me_in_env_file}
             KEYCLOAK_USER: ${KEYCLOAK_USER:-admin}
             KEYCLOAK_PASSWORD: ${KEYCLOAK_PASSWORD:-admin}
             DB_USER: ${REVDEBUG_POSTGRES_USER:-rdb_user}
             DB_PASSWORD: ${REVDEBUG_POSTGRES_PASSWORD:-masterkey}
             DB_ADDR: ${REVDEBUG_POSTGRES_SERVER:-postgres}
+            PROXY_ADDRESS_FORWARDING: "true"
+            KEYCLOAK_IMPORT: "true"
 

@@ -25,6 +25,11 @@ services:
             REVDEBUG_POSTGRES_PASSWORD: ${REVDEBUG_POSTGRES_PASSWORD:-masterkey}
             REVDEBUG_POSTGRES_DATABASE: ${REVDEBUG_POSTGRES_DATABASE:-revdebug_db}
             REVDEBUG_APM_BY_DEFAULT: ${REVDEBUG_APM_BY_DEFAULT:-true}            
+            REVDEBUG_AUTH_METHOD: ${REVDEBUG_AUTH_METHOD:-}
+            REVDEBUG_AUTH_OPENID_ADDRESS: ${REVDEBUG_AUTH_OPENID_ADDRESS:-}
+            REVDEBUG_AUTH_OPENID_CLIENTID: ${REVDEBUG_AUTH_OPENID_CLIENTID:-DevOps}
+            REVDEBUG_AUTH_OPENID_SECRET: ${REVDEBUG_AUTH_OPENID_SECRET:-change_me_in_env_file}
+
   apm-oap:
     image: docker.revdebug.com/apm-oap:${REVDEBUG_DOCKER_TAG:-latest}
     volumes:
@@ -72,7 +77,7 @@ services:
         - ${REVDEBUG_CERTIFICATE_PATH:-/var/revdebug/cert}:/ssl
         - ${REVDEBUG_UAC_FILE:-./uac}:/uac:ro
     environment:
-            CERTIFICATE_NAME: ${REVDEBUG_CERTIFICATE_NAME}
+            CERTIFICATE_NAME: ${REVDEBUG_CERTIFICATE_NAME:-}
             KEEP_ACCESS_LOGS: ${REVDEBUG_KEEP_ACCESS_LOGS:-false}
             SERVER_NAME: ${REVDEBUG_SERVER_NAME}
             SERVER_SSL_PORT: ${REVDEBUG_SERVER_SSL_PORT:-443}
