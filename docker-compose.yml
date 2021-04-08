@@ -48,7 +48,7 @@ services:
     links:
         - "apm-oap:oap.apm"
   wsproxy:
-    image: docker.revdebug.com/wsproxy:${REVDEBUG_DOCKER_TAG:-latest}
+    image: docker.revdebug.com/wsproxy:latest
     environment:
             WSPROXY_CONNECT_HOST: devops
             WSPROXY_APM_HOST: oap.apm
