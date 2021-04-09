@@ -6,15 +6,17 @@ services:
   mediainit:
     image: alpine
     entrypoint: 
-      - /bin/sh
-      - -c 
-      - "mkdir -p /var/revdebug/keycloak && chown 1000: /var/revdebug/keycloak"
+        - /bin/sh
+        - -c 
+        - "mkdir -p /var/revdebug/keycloak ; chown -R 1000: /var/revdebug/keycloak"
     container_name: mediainit
     restart: "no"
     volumes: 
         - ${REVDEBUG_ROOTVOLUME_PATH:-/var/revdebug}:/var/revdebug  
   keycloak:
     image: docker.revdebug.com/keycloak:latest
+    depends_on:
+        - mediainit
     volumes:
         - ${REVDEBUG_ROOTVOLUME_PATH:-/var/revdebug}/keycloak:/var/keycloak-config/cfg  
     environment:
