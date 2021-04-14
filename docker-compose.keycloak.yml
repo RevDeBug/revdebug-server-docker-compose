@@ -1,5 +1,8 @@
 # Optional keycloak authorization bridge - only for Enterpirse installations.
 # 
+# When using rember to pass both the base file and this one to docker-compose, eg:
+#   docker-compose -f docker-compose.yml -f docker-compose.keycloak.yml [command]
+#
 version: '3.0'
 services:
 services:
@@ -14,7 +17,7 @@ services:
     volumes: 
         - ${REVDEBUG_ROOTVOLUME_PATH:-/var/revdebug}:/var/revdebug  
   keycloak:
-    image: docker.revdebug.com/keycloak:latest
+    image: docker.revdebug.com/keycloak:{REVDEBUG_DOCKER_TAG:-latest}
     depends_on:
         - mediainit
     volumes:
