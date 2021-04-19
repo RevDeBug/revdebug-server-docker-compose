@@ -7,7 +7,7 @@ version: '3.0'
 services:
 services:
   mediainit:
-    image: alpine
+    image: ${REVDEBUG_DOCKER_HUB_REGISTRY}alpine
     entrypoint: 
         - /bin/sh
         - -c 
@@ -17,7 +17,7 @@ services:
     volumes: 
         - ${REVDEBUG_ROOTVOLUME_PATH:-/var/revdebug}:/var/revdebug  
   keycloak:
-    image: docker.revdebug.com/keycloak:${REVDEBUG_DOCKER_TAG:-latest}
+    image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}keycloak:${REVDEBUG_DOCKER_TAG:-latest}
     depends_on:
         - mediainit
     volumes:

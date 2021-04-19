@@ -1,7 +1,7 @@
 version: '3.0'
 services:
   postgres:
-    image: postgres:11-alpine
+    image: ${REVDEBUG_DOCKER_HUB_REGISTRY}postgres:11-alpine
     shm_size: ${REVDEBUG_POSTGRES_SHM_SIZE:-256mb}
     volumes:
         - ${REVDEBUG_VOLUME_PATH:-/var/revdebug/server/repo}/revdebug_database:/var/lib/postgresql/data
@@ -11,7 +11,7 @@ services:
             POSTGRES_PASSWORD: ${REVDEBUG_POSTGRES_PASSWORD:-masterkey}
             POSTGRES_DB: ${REVDEBUG_POSTGRES_DATABASE:-revdebug_db}
   devops:
-    image: docker.revdebug.com/devops:${REVDEBUG_DOCKER_TAG:-latest}
+    image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}devops:${REVDEBUG_DOCKER_TAG:-latest}
     volumes:
         - interop:/interop
         - ${REVDEBUG_VOLUME_PATH:-/var/revdebug/server/repo}:/app/RevDeBug
@@ -32,7 +32,7 @@ services:
             REVDEBUG_AUTH_ROLESPROVIDER: ${REVDEBUG_AUTH_ROLESPROVIDER:-}
 
   apm-oap:
-    image: docker.revdebug.com/apm-oap:${REVDEBUG_DOCKER_TAG:-latest}
+    image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}apm-oap:${REVDEBUG_DOCKER_TAG:-latest}
     volumes:
         - interop:/interop
     environment:
@@ -43,8 +43,10 @@ services:
             SW_DATA_SOURCE_PORT_NUMBER: ${REVDEBUG_POSTGRES_PORT:-5432}
             SW_DATA_SOURCE_DATABASE: ${REVDEBUG_POSTGRES_DATABASE:-revdebug_db}
             SW_DATA_SOURCE_STRING_TYPE: varchar
+            SW_CORE_METRICS_DATA_TTL: ${SW_CORE_METRICS_DATA_TTL}
+            SW_CORE_RECORD_DATA_TTL: ${SW_CORE_RECORD_DATA_TTL}
   apm-ui:
-    image: docker.revdebug.com/apm-ui:${REVDEBUG_DOCKER_TAG:-latest}
+    image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}apm-ui:${REVDEBUG_DOCKER_TAG:-latest}
     volumes:
         - interop:/interop
     environment:
@@ -55,7 +57,7 @@ services:
     links:
         - "apm-oap:oap.apm"
   wsproxy:
-    image: docker.revdebug.com/wsproxy:latest
+    image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}wsproxy:latest
     environment:
             WSPROXY_CONNECT_HOST: devops
             WSPROXY_APM_HOST: oap.apm
@@ -63,7 +65,7 @@ services:
         - "apm-oap:oap.apm"
         - "devops:devops"
   nginx:
-    image: docker.revdebug.com/nginx:${REVDEBUG_DOCKER_TAG:-latest}
+    image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}nginx:${REVDEBUG_DOCKER_TAG:-latest}
     ports:
 #         - "${REVDEBUG_LEGACY_SERVER_PORT:-5000}:80"
         - "${REVDEBUG_SERVER_PORT:-80}:80"
