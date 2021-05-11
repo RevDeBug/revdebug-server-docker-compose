@@ -64,7 +64,7 @@ services:
         - "apm-oap:oap.apm"
         - "devops:devops"
   nginx:
-    image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}nginx:${REVDEBUG_DOCKER_TAG:-test001}
+    image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}nginx:${REVDEBUG_DOCKER_TAG:-temp001}
     ports:
 #         - "${REVDEBUG_LEGACY_SERVER_PORT:-5000}:80"
         - "80:80"
