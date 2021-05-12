@@ -78,6 +78,7 @@ services:
       - ${REVDEBUG_ROOTVOLUME_PATH:-/var/revdebug}/nginx:/var/log/nginx
       - ${REVDEBUG_ROOTVOLUME_PATH:-/var/revdebug}/certbot/conf:/etc/letsencrypt
       - ${REVDEBUG_ROOTVOLUME_PATH:-/var/revdebug}/certbot/www:/var/www/certbot
+      - ${REVDEBUG_CERTIFICATE_PATH:-/var/revdebug/cert}:/ssl
       - ${REVDEBUG_UAC_FILE:-./uac}:/uac:ro
     environment:
         APM_AS_DEFAULT: ${REVDEBUG_APM_AS_DEFAULT:-true}
