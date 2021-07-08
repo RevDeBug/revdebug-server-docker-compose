@@ -1,7 +1,7 @@
 version: '3.0'
 services:
   postgres:
-    image: ${REVDEBUG_DOCKER_HUB_REGISTRY}postgres:11-alpine
+    image: ${REVDEBUG_DOCKER_HUB_REGISTRY:-}postgres:11-alpine
     shm_size: ${REVDEBUG_POSTGRES_SHM_SIZE:-256mb}
     volumes:
         - ${REVDEBUG_VOLUME_PATH:-/var/revdebug/server/repo}/revdebug_database:/var/lib/postgresql/data
@@ -67,24 +67,26 @@ services:
     image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}nginx:${REVDEBUG_DOCKER_TAG:-latest}
     ports:
 #         - "${REVDEBUG_LEGACY_SERVER_PORT:-5000}:80"
-        - "${REVDEBUG_SERVER_PORT:-80}:80"
-        - "${REVDEBUG_SERVER_SSL_PORT:-443}:443"
+        - "80:80"
+        - "443:443"
         - "${REVDEBUG_SERVER_GRPC_PORT:-11800}:11800"
         - "${REVDEBUG_RECORDERS_PORT:-42733}:42733"
         - "${REVDEBUG_APPLICATIONS_PORT:-42734}:42734"
         - "${REVDEBUG_GRPC_PORT:-42735}:42735"
     volumes:
-        - interop:/interop
-        - ${REVDEBUG_ROOTVOLUME_PATH:-/var/revdebug}/nginx:/var/log/nginx
-        - ${REVDEBUG_CERTIFICATE_PATH:-/var/revdebug/cert}:/ssl
-        - ${REVDEBUG_UAC_FILE:-./uac}:/uac:ro
+      - interop:/interop
+      - ${REVDEBUG_ROOTVOLUME_PATH:-/var/revdebug}/nginx:/var/log/nginx
+      - ${REVDEBUG_ROOTVOLUME_PATH:-/var/revdebug}/certbot/conf:/etc/letsencrypt
+      - ${REVDEBUG_ROOTVOLUME_PATH:-/var/revdebug}/certbot/www:/var/www/certbot
+      - ${REVDEBUG_CERTIFICATE_PATH:-/var/revdebug/cert}:/ssl
+      - ${REVDEBUG_UAC_FILE:-./uac}:/uac:ro
     environment:
-            APM_AS_DEFAULT: ${REVDEBUG_APM_AS_DEFAULT:-true}
-            CERTIFICATE_NAME: ${REVDEBUG_CERTIFICATE_NAME:-}
-            KEEP_ACCESS_LOGS: ${REVDEBUG_KEEP_ACCESS_LOGS:-false}
-            SERVER_NAME: ${REVDEBUG_SERVER_NAME}
-            SERVER_SSL_PORT: ${REVDEBUG_SERVER_SSL_PORT:-443}
-            SERVER_PORT: ${REVDEBUG_SERVER_PORT:-80}
+        APM_AS_DEFAULT: ${REVDEBUG_APM_AS_DEFAULT:-true}
+        CERTIFICATE_NAME: ${REVDEBUG_CERTIFICATE_NAME:-}
+        KEEP_ACCESS_LOGS: ${REVDEBUG_KEEP_ACCESS_LOGS:-false}
+        SERVER_NAME: ${REVDEBUG_SERVER_NAME:-}
+        SSL_CERT_PATH: ${REVDEBUG_SSL_CERT_PATH:-}
+        SSL_CERTKEY_PATH: ${REVDEBUG_SSL_CERTKEY_PATH:-}
     depends_on:
         - apm-ui
         - apm-oap
