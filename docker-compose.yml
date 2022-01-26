@@ -109,9 +109,9 @@ services:
     environment:
             REVDEBUG_CERTIFICATE_NAME: ${REVDEBUG_CERTIFICATE_NAME:-}
             REVDEBUG_SERVER_NAME: ${REVDEBUG_SERVER_NAME:-}
-            REVDEBUG_AUTH_OPENID_SECRET: ${REVDEBUG_AUTH_OPENID_SECRET:-change_me_in_env_file}
+            REVDEBUG_AUTH_OPENID_SECRET: ${REVDEBUG_AUTH_OPENID_SECRET:-}
             KEYCLOAK_USER: ${KEYCLOAK_USER:-admin}
-            KEYCLOAK_PASSWORD: ${KEYCLOAK_PASSWORD:-admin}
+            KEYCLOAK_PASSWORD: ${KEYCLOAK_PASSWORD:-change_me_in_env_file}
             DB_USER: ${REVDEBUG_POSTGRES_USER:-rdb_user}
             DB_PASSWORD: ${REVDEBUG_POSTGRES_PASSWORD:-masterkey}
             DB_ADDR: ${REVDEBUG_POSTGRES_SERVER:-postgres}
