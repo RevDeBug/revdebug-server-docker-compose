@@ -10,6 +10,27 @@ services:
             POSTGRES_USER: ${REVDEBUG_POSTGRES_USER:-rdb_user}
             POSTGRES_PASSWORD: ${REVDEBUG_POSTGRES_PASSWORD:-masterkey}
             POSTGRES_DB: ${REVDEBUG_POSTGRES_DATABASE:-revdebug_db}
+  opensearch:
+    image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}opensearch:${REVDEBUG_DOCKER_TAG:-latest}
+    depends_on:
+      mediainit:
+        condition: service_completed_successfully
+    healthcheck:
+      test: [ "CMD-SHELL", "curl --silent --fail localhost:9200/_cluster/health || exit 1" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    environment:
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ${REVDEBUG_VOLUME_PATH:-/var/revdebug/server/repo}/apm_database:/usr/share/opensearch/data
   devops:
     image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}devops:${REVDEBUG_DOCKER_TAG:-latest}
     volumes:
@@ -29,16 +50,14 @@ services:
             REVDEBUG_AUTH_OPENID_SECRET: ${REVDEBUG_AUTH_OPENID_SECRET:-change_me_in_env_file}
   apm-oap:
     image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}apm-oap:${REVDEBUG_DOCKER_TAG:-latest}
+    depends_on:
+      opensearch:
+        condition: service_healthy
     volumes:
         - interop:/interop
     environment:
-            SW_STORAGE: postgres
-            SW_DATA_SOURCE_USER: ${REVDEBUG_POSTGRES_USER:-rdb_user}
-            SW_DATA_SOURCE_PASSWORD: ${REVDEBUG_POSTGRES_PASSWORD:-masterkey}
-            SW_DATA_SOURCE_SERVER_NAME: ${REVDEBUG_POSTGRES_SERVER:-postgres}
-            SW_DATA_SOURCE_PORT_NUMBER: ${REVDEBUG_POSTGRES_PORT:-5432}
-            SW_DATA_SOURCE_DATABASE: ${REVDEBUG_POSTGRES_DATABASE:-revdebug_db}
-            SW_DATA_SOURCE_STRING_TYPE: varchar
+            SW_STORAGE: elasticsearch7
+            SW_STORAGE_ES_CLUSTER_NODES: opensearch:9200
             SW_CORE_METRICS_DATA_TTL: ${SW_CORE_METRICS_DATA_TTL:-14}
             SW_CORE_RECORD_DATA_TTL: ${SW_CORE_RECORD_DATA_TTL:-7}
   apm-ui:
@@ -95,7 +114,7 @@ services:
     entrypoint: 
         - /bin/sh
         - -c 
-        - "mkdir -p /var/revdebug/keycloak ; chown -R 1000: /var/revdebug/keycloak"
+        - "mkdir -p /var/revdebug/keycloak ; chown -R 1000: /var/revdebug/keycloak; mkdir -p /var/revdebug/server/repo/apm_database; chown -R 1000: /var/revdebug/server/repo/apm_database"
     container_name: mediainit
     restart: "no"
     volumes: 
