@@ -48,6 +48,8 @@ services:
             REVDEBUG_AUTH_OPENID_ADDRESS: ${REVDEBUG_AUTH_OPENID_ADDRESS:-}
             REVDEBUG_AUTH_OPENID_CLIENTID: ${REVDEBUG_AUTH_OPENID_CLIENTID:-DevOps}
             REVDEBUG_AUTH_OPENID_SECRET: ${REVDEBUG_AUTH_OPENID_SECRET:-change_me_in_env_file}
+    links:
+        - "apm-oap:oap.apm"
   apm-oap:
     image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}apm-oap:${REVDEBUG_DOCKER_TAG:-latest}
     depends_on:
