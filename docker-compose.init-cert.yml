@@ -2,7 +2,7 @@ version: '3'
 
 services:
   nginx:
-    image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}nginx:${REVDEBUG_DOCKER_TAG:-temp001}
+    image: ${REVDEBUG_DOCKER_REGISTRY:-docker3.revdebug.com/}nginx:${REVDEBUG_DOCKER_TAG:-temp001}
     volumes:
       - ${REVDEBUG_ROOTVOLUME_PATH:-/var/revdebug}/nginx:/var/log/nginx
       - ${REVDEBUG_ROOTVOLUME_PATH:-/var/revdebug}/certbot/conf:/etc/letsencrypt
