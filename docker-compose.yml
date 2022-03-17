@@ -11,7 +11,7 @@ services:
             POSTGRES_PASSWORD: ${REVDEBUG_POSTGRES_PASSWORD:-masterkey}
             POSTGRES_DB: ${REVDEBUG_POSTGRES_DATABASE:-revdebug_db}
   devops:
-    image: ${REVDEBUG_DOCKER_REGISTRY:-docker3.revdebug.com/}devops:${REVDEBUG_DOCKER_TAG:-latest}
+    image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}devops:${REVDEBUG_DOCKER_TAG:-latest}
     volumes:
         - interop:/interop
         - ${REVDEBUG_VOLUME_PATH:-/var/revdebug/server/repo}:/app/RevDeBug
@@ -28,7 +28,7 @@ services:
             REVDEBUG_AUTH_OPENID_CLIENTID: ${REVDEBUG_AUTH_OPENID_CLIENTID:-DevOps}
             REVDEBUG_AUTH_OPENID_SECRET: ${REVDEBUG_AUTH_OPENID_SECRET:-change_me_in_env_file}
   apm-oap:
-    image: ${REVDEBUG_DOCKER_REGISTRY:-docker3.revdebug.com/}apm-oap:${REVDEBUG_DOCKER_TAG:-latest}
+    image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}apm-oap:${REVDEBUG_DOCKER_TAG:-latest}
     volumes:
         - interop:/interop
     environment:
@@ -42,7 +42,7 @@ services:
             SW_CORE_METRICS_DATA_TTL: ${SW_CORE_METRICS_DATA_TTL:-14}
             SW_CORE_RECORD_DATA_TTL: ${SW_CORE_RECORD_DATA_TTL:-7}
   apm-ui:
-    image: ${REVDEBUG_DOCKER_REGISTRY:-docker3.revdebug.com/}apm-ui:${REVDEBUG_DOCKER_TAG:-latest}
+    image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}apm-ui:${REVDEBUG_DOCKER_TAG:-latest}
     volumes:
         - interop:/interop
     environment:
@@ -53,7 +53,7 @@ services:
     links:
         - "apm-oap:oap.apm"
   wsproxy:
-    image: ${REVDEBUG_DOCKER_REGISTRY:-docker3.revdebug.com/}wsproxy:latest
+    image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}wsproxy:latest
     environment:
             WSPROXY_CONNECT_HOST: devops
             WSPROXY_APM_HOST: oap.apm
@@ -61,7 +61,7 @@ services:
         - "apm-oap:oap.apm"
         - "devops:devops"
   nginx:
-    image: ${REVDEBUG_DOCKER_REGISTRY:-docker3.revdebug.com/}nginx:${REVDEBUG_DOCKER_TAG:-latest}
+    image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}nginx:${REVDEBUG_DOCKER_TAG:-latest}
     ports:
         - "80:80"
         - "443:443"
@@ -101,7 +101,7 @@ services:
     volumes: 
         - ${REVDEBUG_ROOTVOLUME_PATH:-/var/revdebug}:/var/revdebug  
   keycloak:
-    image: ${REVDEBUG_DOCKER_REGISTRY:-docker3.revdebug.com/}keycloak:${REVDEBUG_DOCKER_TAG:-latest}
+    image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}keycloak:${REVDEBUG_DOCKER_TAG:-latest}
     depends_on:
         - mediainit
     volumes:
