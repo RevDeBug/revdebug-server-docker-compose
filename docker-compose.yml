@@ -33,6 +33,7 @@ services:
       - ${REVDEBUG_VOLUME_PATH:-/var/revdebug/server/repo}/apm_database:/usr/share/opensearch/data
   devops:
     image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}devops:${REVDEBUG_DOCKER_TAG:-latest}
+    restart: unless-stopped
     volumes:
         - interop:/interop
         - ${REVDEBUG_VOLUME_PATH:-/var/revdebug/server/repo}:/app/RevDeBug
@@ -52,6 +53,7 @@ services:
         - "apm-oap:oap.apm"
   apm-oap:
     image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}apm-oap:${REVDEBUG_DOCKER_TAG:-latest}
+    restart: unless-stopped
     depends_on:
       opensearch:
         condition: service_healthy
@@ -64,6 +66,7 @@ services:
             SW_CORE_RECORD_DATA_TTL: ${SW_CORE_RECORD_DATA_TTL:-7}
   apm-ui:
     image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}apm-ui:${REVDEBUG_DOCKER_TAG:-latest}
+    restart: unless-stopped
     volumes:
         - interop:/interop
     environment:
@@ -75,6 +78,7 @@ services:
         - "apm-oap:oap.apm"
   wsproxy:
     image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}wsproxy:latest
+    restart: unless-stopped
     environment:
             WSPROXY_CONNECT_HOST: devops
             WSPROXY_APM_HOST: oap.apm
@@ -83,6 +87,7 @@ services:
         - "devops:devops"
   nginx:
     image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}nginx:${REVDEBUG_DOCKER_TAG:-latest}
+    restart: unless-stopped
     ports:
         - "80:80"
         - "443:443"
