@@ -31,7 +31,7 @@ services:
         soft: -1
         hard: -1
     volumes:
-      - ${REVDEBUG_VOLUME_PATH:-/var/revdebug/server/repo}/apm_database:/usr/share/opensearch/data
+      - ${REVDEBUG_VOLUME_PATH:-/var/revdebug/server/repo}/apm_database:/usr/share/elasticsearch/data
   devops:
     image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}devops:${REVDEBUG_DOCKER_TAG:-latest}
     restart: unless-stopped
