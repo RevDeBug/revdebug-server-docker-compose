@@ -10,6 +10,8 @@ services:
             POSTGRES_USER: ${REVDEBUG_POSTGRES_USER:-rdb_user}
             POSTGRES_PASSWORD: ${REVDEBUG_POSTGRES_PASSWORD:-masterkey}
             POSTGRES_DB: ${REVDEBUG_POSTGRES_DATABASE:-revdebug_db}
+    logging:
+        driver: "local"
   opensearch:
     image: docker.elastic.co/elasticsearch/elasticsearch-oss:7.4.2
     depends_on:
@@ -32,6 +34,8 @@ services:
         hard: -1
     volumes:
       - ${REVDEBUG_VOLUME_PATH:-/var/revdebug/server/repo}/apm_database:/usr/share/elasticsearch/data
+    logging:
+        driver: "local"
   devops:
     image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}devops:${REVDEBUG_DOCKER_TAG:-latest}
     restart: unless-stopped
@@ -52,6 +56,8 @@ services:
             REVDEBUG_AUTH_OPENID_SECRET: ${REVDEBUG_AUTH_OPENID_SECRET:-change_me_in_env_file}
     links:
         - "apm-oap:oap.apm"
+    logging:
+        driver: "local"
   apm-oap:
     image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}apm-oap:${REVDEBUG_DOCKER_TAG:-latest}
     restart: unless-stopped
@@ -65,6 +71,8 @@ services:
             SW_STORAGE_ES_CLUSTER_NODES: opensearch:9200
             SW_CORE_METRICS_DATA_TTL: ${SW_CORE_METRICS_DATA_TTL:-14}
             SW_CORE_RECORD_DATA_TTL: ${SW_CORE_RECORD_DATA_TTL:-7}
+    logging:
+        driver: "local"
   apm-ui:
     image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}apm-ui:${REVDEBUG_DOCKER_TAG:-latest}
     restart: unless-stopped
@@ -77,6 +85,8 @@ services:
         - apm-oap
     links:
         - "apm-oap:oap.apm"
+    logging:
+        driver: "local"
   wsproxy:
     image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}wsproxy:latest
     restart: unless-stopped
@@ -86,6 +96,8 @@ services:
     links:
         - "apm-oap:oap.apm"
         - "devops:devops"
+    logging:
+        driver: "local"
   nginx:
     image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}nginx:${REVDEBUG_DOCKER_TAG:-latest}
     restart: unless-stopped
@@ -117,6 +129,8 @@ services:
     links:
         - "apm-oap:oap.apm"
         - "apm-ui:ui.apm"
+    logging:
+        driver: "local"
   mediainit:
     image: ${REVDEBUG_DOCKER_HUB_REGISTRY}alpine
     entrypoint: 
@@ -127,6 +141,8 @@ services:
     restart: "no"
     volumes: 
         - ${REVDEBUG_ROOTVOLUME_PATH:-/var/revdebug}:/var/revdebug  
+    logging:
+        driver: "local"
   keycloak:
     image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}keycloak:${REVDEBUG_DOCKER_TAG:-latest}
     depends_on:
@@ -146,5 +162,7 @@ services:
             DB_ADDR: ${REVDEBUG_POSTGRES_SERVER:-postgres}
             PROXY_ADDRESS_FORWARDING: "true"
             KEYCLOAK_IMPORT: "true"
+    logging:
+        driver: "local"
 volumes:
   interop:
