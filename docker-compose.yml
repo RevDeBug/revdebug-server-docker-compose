@@ -70,7 +70,7 @@ services:
             SW_STORAGE: elasticsearch7
             SW_STORAGE_ES_CLUSTER_NODES: opensearch:9200
             SW_CORE_METRICS_DATA_TTL: ${SW_CORE_METRICS_DATA_TTL:-14}
-            SW_CORE_RECORD_DATA_TTL: ${SW_CORE_RECORD_DATA_TTL:-7}
+            SW_CORE_RECORD_DATA_TTL: ${SW_CORE_RECORD_DATA_TTL:-3}
             SW_STORAGE_ES_INDEX_REPLICAS_NUMBER: ${SW_STORAGE_ES_INDEX_REPLICAS_NUMBER:-0}
     logging:
         driver: "local"
