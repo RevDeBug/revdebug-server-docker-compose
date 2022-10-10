@@ -176,6 +176,10 @@ services:
             DB_ADDR: ${REVDEBUG_POSTGRES_SERVER:-postgres}
             PROXY_ADDRESS_FORWARDING: "true"
             KEYCLOAK_IMPORT: "true"
+            KEYCLOAK_USER_UPDATE: ${KEYCLOAK_USER_UPDATE:-false}
+            REVDEBUG_DEFAULT_USER: ${REVDEBUG_DEFAULT_USER:-false}
+            REVDEBUG_USER: ${REVDEBUG_USER:-}
+            REVDEBUG_USER_PASSWORD: ${REVDEBUG_USER_PASSWORD:-}
     logging:
         driver: "local"
 volumes:
