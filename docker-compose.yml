@@ -4,7 +4,7 @@ services:
     image: ${REVDEBUG_DOCKER_HUB_REGISTRY:-}postgres:11-alpine
     restart: unless-stopped
     healthcheck:
-            test: pg_isready && echo "SELECT 'CREATE DATABASE keycloak' WHERE NOT EXISTS (SELECT datname FROM pg_catalog.pg_database WHERE datname='keycloak')\gexec" | psql -U "${REVDEBUG_POSTGRES_USER:-rdb_user}" -w template1
+            test: pg_isready -U "${REVDEBUG_POSTGRES_USER:-rdb_user}" && echo "SELECT 'CREATE DATABASE keycloak' WHERE NOT EXISTS (SELECT datname FROM pg_catalog.pg_database WHERE datname='keycloak')\gexec" | psql -U "${REVDEBUG_POSTGRES_USER:-rdb_user}" -w template1
     shm_size: ${REVDEBUG_POSTGRES_SHM_SIZE:-256mb}
     volumes:
         - ${REVDEBUG_VOLUME_PATH:-/var/revdebug/server/repo}/revdebug_database:/var/lib/postgresql/data
