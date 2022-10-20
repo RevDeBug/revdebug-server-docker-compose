@@ -132,6 +132,7 @@ services:
         SERVER_NAME: ${REVDEBUG_SERVER_NAME:-}
         SSL_CERT_PATH: ${REVDEBUG_SSL_CERT_PATH:-}
         SSL_CERTKEY_PATH: ${REVDEBUG_SSL_CERTKEY_PATH:-}
+        EXTERNAL_SSL_PROXY: ${EXTERNAL_SSL_PROXY:-}
     depends_on:
         - apm-ui
         - apm-oap
@@ -180,6 +181,7 @@ services:
             REVDEBUG_DEFAULT_USER: ${REVDEBUG_DEFAULT_USER:-false}
             REVDEBUG_USER: ${REVDEBUG_USER:-}
             REVDEBUG_USER_PASSWORD: ${REVDEBUG_USER_PASSWORD:-}
+            EXTERNAL_SSL_PROXY: ${EXTERNAL_SSL_PROXY:-}
     logging:
         driver: "local"
 volumes:
