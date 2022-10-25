@@ -2,7 +2,6 @@ version: '3.0'
 services:
   postgres:
     image: ${REVDEBUG_DOCKER_HUB_REGISTRY:-}postgres:11-alpine
-    restart: unless-stopped
     healthcheck:
             test: pg_isready -U "${REVDEBUG_POSTGRES_USER:-rdb_user}" -d postgres && echo "SELECT 'CREATE DATABASE keycloak' WHERE NOT EXISTS (SELECT datname FROM pg_catalog.pg_database WHERE datname='keycloak')\gexec" | psql -U "${REVDEBUG_POSTGRES_USER:-rdb_user}" -w postgres
     shm_size: ${REVDEBUG_POSTGRES_SHM_SIZE:-256mb}
@@ -16,7 +15,6 @@ services:
         driver: "local"
   opensearch:
     image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}opensearch:${REVDEBUG_DOCKER_TAG:-latest}
-    restart: unless-stopped
     depends_on:
       mediainit:
         condition: service_completed_successfully
@@ -41,7 +39,6 @@ services:
         driver: "local"
   devops:
     image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}devops:${REVDEBUG_DOCKER_TAG:-latest}
-    restart: unless-stopped
     depends_on:
         - "postgres"
     volumes:
@@ -65,7 +62,6 @@ services:
         driver: "local"
   apm-oap:
     image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}apm-oap:${REVDEBUG_DOCKER_TAG:-latest}
-    restart: unless-stopped
     depends_on:
       opensearch:
         condition: service_healthy
@@ -81,7 +77,6 @@ services:
         driver: "local"
   apm-ui:
     image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}apm-ui:${REVDEBUG_DOCKER_TAG:-latest}
-    restart: unless-stopped
     depends_on:
         - "apm-oap"
     volumes:
@@ -97,7 +92,6 @@ services:
         driver: "local"
   wsproxy:
     image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}wsproxy:latest
-    restart: unless-stopped
     depends_on:
         - "devops"
     environment:
@@ -110,7 +104,6 @@ services:
         driver: "local"
   nginx:
     image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}nginx:${REVDEBUG_DOCKER_TAG:-latest}
-    restart: unless-stopped
     ports:
         - "80:80"
         - "443:443"
@@ -156,7 +149,6 @@ services:
         driver: "local"
   keycloak:
     image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}keycloak:${REVDEBUG_DOCKER_TAG:-latest}
-    restart: unless-stopped
     depends_on:
       mediainit:
         condition: service_completed_successfully
