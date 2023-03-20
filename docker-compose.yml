@@ -71,25 +71,31 @@ services:
         condition: service_healthy
     volumes:
         - interop:/interop
+        - ${REVDEBUG_ROOTVOLUME_PATH:-/var/revdebug}/apm-oap:/revdebug
     environment:
-            SW_STORAGE: elasticsearch7
+            SW_STORAGE: elasticsearch
             SW_STORAGE_ES_CLUSTER_NODES: opensearch:9200
-            SW_CORE_METRICS_DATA_TTL: ${SW_CORE_METRICS_DATA_TTL:-14}
-            SW_CORE_RECORD_DATA_TTL: ${SW_CORE_RECORD_DATA_TTL:-3}
-            SW_STORAGE_ES_INDEX_REPLICAS_NUMBER: ${SW_STORAGE_ES_INDEX_REPLICAS_NUMBER:-0}
+            SW_CORE_METRICS_DATA_TTL: ${SW_CORE_METRICS_DATA_TTL:-90}
+            SW_CORE_RECORD_DATA_TTL: ${SW_CORE_RECORD_DATA_TTL:-7}
+            SW_OTEL_RECEIVER: ${SW_OTEL_RECEIVER:-default}
+            SW_OTEL_RECEIVER_ENABLED_OC_RULES: ${SW_OTEL_RECEIVER_ENABLED_OC_RULES:-oap,k8s-cluster,k8s-node,k8s-service}
+            SW_OTEL_RECEIVER_ENABLED_HANDLERS: ${SW_OTEL_RECEIVER_ENABLED_HANDLERS:-oc}
+            SW_TELEMETRY_PROMETHEUS_PORT:  ${SW_TELEMETRY_PROMETHEUS_PORT:-1234}
+            SW_TELEMETRY: ${SW_TELEMETRY:-prometheus}
+            SW_PROMETHEUS_FETCHER: ${SW_PROMETHEUS_FETCHER:-default}
+            SW_PROMETHEUS_FETCHER_ENABLED_RULES: ${SW_PROMETHEUS_FETCHER_ENABLED_RULES:-self,metric-custom}
+            SW_RECEIVER_ZABBIX: ${SW_RECEIVER_ZABBIX:-default}
     logging:
         driver: "local"
   apm-ui:
     image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}apm-ui:${REVDEBUG_DOCKER_TAG:-latest}
     depends_on:
-        - "apm-oap"
+        - apm-oap
     volumes:
         - interop:/interop
     environment:
             SW_OAP_ADDRESS: oap.apm:12800
             SERVER_maxHttpHeaderSize: 640000
-    depends_on:
-        - apm-oap
     links:
         - "apm-oap:oap.apm"
     logging:
