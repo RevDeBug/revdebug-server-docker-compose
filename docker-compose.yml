@@ -85,6 +85,7 @@ services:
             SW_PROMETHEUS_FETCHER: ${SW_PROMETHEUS_FETCHER:-default}
             SW_PROMETHEUS_FETCHER_ENABLED_RULES: ${SW_PROMETHEUS_FETCHER_ENABLED_RULES:-self,metric-custom}
             SW_RECEIVER_ZABBIX: ${SW_RECEIVER_ZABBIX:-default}
+            SW_ENABLE_EXTRA_DASHBOARDS: ${SW_ENABLE_EXTRA_DASHBOARDS:-}
     logging:
         driver: "local"
   apm-ui:
