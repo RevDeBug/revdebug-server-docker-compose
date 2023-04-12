@@ -14,7 +14,7 @@ services:
     logging:
         driver: "local"
   opensearch:
-    image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}opensearch:${REVDEBUG_DOCKER_TAG:-latest}
+    image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com}/opensearch:${REVDEBUG_DOCKER_TAG:-latest}
     depends_on:
       mediainit:
         condition: service_completed_successfully
@@ -38,7 +38,7 @@ services:
     logging:
         driver: "local"
   devops:
-    image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}devops:${REVDEBUG_DOCKER_TAG:-latest}
+    image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com}/devops:${REVDEBUG_DOCKER_TAG:-latest}
     depends_on:
         - "postgres"
     volumes:
@@ -63,7 +63,7 @@ services:
     logging:
         driver: "local"
   apm-oap:
-    image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}apm-oap:${REVDEBUG_DOCKER_TAG:-latest}
+    image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com}/apm-oap:${REVDEBUG_DOCKER_TAG:-latest}
     depends_on:
       opensearch:
         condition: service_healthy
@@ -87,7 +87,7 @@ services:
     logging:
         driver: "local"
   apm-ui:
-    image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}apm-ui:${REVDEBUG_DOCKER_TAG:-latest}
+    image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com}/apm-ui:${REVDEBUG_DOCKER_TAG:-latest}
     depends_on:
         - apm-oap
     volumes:
@@ -100,7 +100,7 @@ services:
     logging:
         driver: "local"
   wsproxy:
-    image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}wsproxy:latest
+    image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com}/wsproxy:latest
     depends_on:
         - "devops"
     environment:
@@ -112,7 +112,7 @@ services:
     logging:
         driver: "local"
   nginx:
-    image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}nginx:${REVDEBUG_DOCKER_TAG:-latest}
+    image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com}/nginx:${REVDEBUG_DOCKER_TAG:-latest}
     ports:
         - "80:80"
         - "443:443"
@@ -157,7 +157,7 @@ services:
     logging:
         driver: "local"
   keycloak:
-    image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}keycloak:${REVDEBUG_DOCKER_TAG:-latest}
+    image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com}/keycloak:${REVDEBUG_DOCKER_TAG:-latest}
     depends_on:
       mediainit:
         condition: service_completed_successfully
