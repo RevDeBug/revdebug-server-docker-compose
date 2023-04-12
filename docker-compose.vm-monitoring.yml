@@ -1,0 +1,13 @@
+version: '3.0'
+services:
+  otel-collector:
+    image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}opentelemetry-collector:latest
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./data/otel-collector/otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    links:
+      - "apm-oap:oap.apm"
+    depends_on:
+      - apm-oap
+    logging:
+      driver: "local"
