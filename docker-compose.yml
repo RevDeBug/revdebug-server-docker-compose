@@ -25,10 +25,11 @@ services:
       retries: 30
       start_period: 10s
     environment:
-      - discovery.type=single-node
-      - bootstrap.memory_lock=true
-      - "OPENSEARCH_JAVA_OPTS=-Xms4g -Xmx4g"
-      - index.store.type=niofs
+      OPENSEARCH_JAVA_OPTS: ${OPENSEARCH_JAVA_OPTS:--Xms4g -Xmx4g}
+      index.store.type: ${OPENSEARCH_INDEX_STORE_TYPE:-niofs}
+      discovery.type: ${OPENSEARCH_DISCOVERY_TYPE:-single-node}
+      bootstrap.memory_lock: true
+      path.repo: /usr/share/opensearch/snapshots
     ulimits:
       memlock:
         soft: -1
