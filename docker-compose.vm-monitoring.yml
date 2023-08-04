@@ -7,7 +7,16 @@ services:
       - ./data/otel-collector/otel-collector-config.yaml:/etc/otel-collector-config.yaml
     links:
       - "apm-oap:oap.apm"
+      - "node_exporter:RevDeBug-Server"
     depends_on:
       - apm-oap
     logging:
       driver: "local"
+  node_exporter:
+    image: docker.revdebug.com/node-exporter:latest
+    container_name: node_exporter
+    command:
+      - '--path.rootfs=/host'
+    restart: unless-stopped
+    volumes:
+      - '/:/host:ro,rslave'
