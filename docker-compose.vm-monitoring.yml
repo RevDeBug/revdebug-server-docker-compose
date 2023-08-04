@@ -14,7 +14,6 @@ services:
       driver: "local"
   node_exporter:
     image: docker.revdebug.com/node-exporter:latest
-    container_name: node_exporter
     command:
       - '--path.rootfs=/host'
     restart: unless-stopped
