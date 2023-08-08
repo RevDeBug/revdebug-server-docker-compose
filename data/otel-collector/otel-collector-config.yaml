@@ -10,9 +10,10 @@ receivers:
         - job_name: 'otel-collector'
           scrape_interval: 30s
           static_configs: 
-              # Replace the IP to your VMs‘s IP which has installed Node Exporter
-            - targets: [ 'vm.address:9100' ] 
-            - targets: [ 'vm.address:9100' ] 
+            # The target 'RevDeBug-Server:9100' corresponds to a node_exporter monitoring the VM hosting the Docker Compose for RevDeBug.
+            # Additional VMs can be added by appending their addresses to this list, following the format:
+            # - targets: [ 'RevDeBug-Server:9100', 'vm.address1:9100', 'vm.address2:9100' ]
+            - targets: [ 'RevDeBug-Server:9100' ]
 processors:
   batch:
 # An exporter is how data gets sent to different systems/back-ends
@@ -22,7 +23,7 @@ exporters:
     endpoint: "apm-oap:11800" # The OAP Server address
     insecure: true
   logging:
-    logLevel: info
+    logLevel: error
 service:
   pipelines:
     metrics:
