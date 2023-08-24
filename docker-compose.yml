@@ -90,7 +90,7 @@ services:
     logging:
         driver: "local"
   apm-ui:
-    image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}apm-ui:${REVDEBUG_DOCKER_TAG:-latest}
+    image: docker-test.revdebug.com/apm-ui:salamandra-integration
     depends_on:
         - apm-oap
     volumes:
@@ -100,6 +100,7 @@ services:
             SERVER_maxHttpHeaderSize: 640000
     links:
         - "apm-oap:oap.apm"
+        - "axolotl-server:salamandra"
     logging:
         driver: "local"
   wsproxy:

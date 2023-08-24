@@ -1,0 +1,29 @@
+version: "2.1"
+
+services:
+  postgres-salamandra:
+    container_name: postgres-salamandra
+    environment:
+      POSTGRES_USER: "root"
+      POSTGRES_PASSWORD: "root"
+      POSTGRES_DB: "admin"
+    volumes:
+      - ./init-postgres:/docker-entrypoint-initdb.d
+    image: "postgres:11-alpine"
+    healthcheck:
+      test: ["CMD", "echo", "'SELECT 1'", "|", "psql", "axldb", "axolotl"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  axolotl-server:
+    container_name: docker-test.revdebug.com/axolotl-server:revdebug-integration
+    ports:
+      - 52734:52734
+    image: "axolotl"
+    command: "/serve-axolotl --dbhost db:"
+    depends_on:
+      postgres-salamandra:
+        condition: service_healthy
+    links:
+        - "postgres-salamandra:db"
