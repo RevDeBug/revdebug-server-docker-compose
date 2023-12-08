@@ -73,6 +73,7 @@ services:
     volumes:
         - interop:/interop
         - ${REVDEBUG_ROOTVOLUME_PATH:-/var/revdebug}/apm-oap:/revdebug
+        - ./data/alarms:/skywalking/ext-config
     environment:
             SW_STORAGE: elasticsearch
             SW_STORAGE_ES_CLUSTER_NODES: opensearch:9200
