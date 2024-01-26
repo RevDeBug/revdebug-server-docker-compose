@@ -6,7 +6,7 @@ services:
             test: pg_isready -U "${REVDEBUG_POSTGRES_USER:-rdb_user}" -d postgres && echo "SELECT 'CREATE DATABASE keycloak' WHERE NOT EXISTS (SELECT datname FROM pg_catalog.pg_database WHERE datname='keycloak')\gexec" | psql -U "${REVDEBUG_POSTGRES_USER:-rdb_user}" -w postgres
     shm_size: ${REVDEBUG_POSTGRES_SHM_SIZE:-256mb}
     volumes:
-        - ${REVDEBUG_VOLUME_PATH:-/var/revdebug/server/repo}/revdebug_database:/var/lib/postgresql/data
+        - ${REVDEBUG_VOLUME_PATH:-/var/revdebug/record_server/database}/revdebug_database:/var/lib/postgresql/data
     environment:
             POSTGRES_USER: ${REVDEBUG_POSTGRES_USER:-rdb_user}
             POSTGRES_PASSWORD: ${REVDEBUG_POSTGRES_PASSWORD:-masterkey}
@@ -14,7 +14,7 @@ services:
     logging:
         driver: "local"
   opensearch:
-    image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}opensearch:${REVDEBUG_DOCKER_TAG:-latest}
+    image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com}/opensearch:${REVDEBUG_DOCKER_TAG:-latest}
     depends_on:
       mediainit:
         condition: service_completed_successfully
@@ -35,17 +35,15 @@ services:
         soft: -1
         hard: -1
     volumes:
-      - ${REVDEBUG_VOLUME_PATH:-/var/revdebug/server/repo}/apm_database:/usr/share/opensearch/data
+      - ${REVDEBUG_VOLUME_PATH:-/var/revdebug/record_server/database}/apm_database:/usr/share/opensearch/data
     logging:
         driver: "local"
   devops:
-    image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}devops:${REVDEBUG_DOCKER_TAG:-latest}
+    image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com}/devops:${REVDEBUG_DOCKER_TAG:-latest}
     depends_on:
         - "postgres"
     volumes:
-        - interop:/interop
-        - ${REVDEBUG_VOLUME_PATH:-/var/revdebug/server/repo}:/app/RevDeBug
-        - ${REVDEBUG_VOLUME_PATH:-/var/revdebug/server/git_hive}:/var/RevDeBug/git_hive
+        - ${REVDEBUG_VOLUME_PATH:-/var/revdebug/record_server}:/var/RevDeBug/record_server
         - ${REVDEBUG_VOLUME_CAPATH:-/var/revdebug/ca}:/usr/local/share/ca-certificates:ro
         - ${REVDEBUG_VOLUME_GIT_SSH_KEYS:-/var/revdebug/git-ssh-key-dir}:/git-ssh-key-dir
     environment:
@@ -66,7 +64,7 @@ services:
     logging:
         driver: "local"
   apm-oap:
-    image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}apm-oap:${REVDEBUG_DOCKER_TAG:-latest}
+    image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com}/apm-oap:${REVDEBUG_DOCKER_TAG:-latest}
     depends_on:
       opensearch:
         condition: service_healthy
@@ -91,7 +89,7 @@ services:
     logging:
         driver: "local"
   apm-ui:
-    image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}apm-ui:${REVDEBUG_DOCKER_TAG:-latest}
+    image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com}/apm-ui:${REVDEBUG_DOCKER_TAG:-latest}
     depends_on:
         - apm-oap
     volumes:
@@ -104,7 +102,7 @@ services:
     logging:
         driver: "local"
   wsproxy:
-    image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}wsproxy:latest
+    image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com}/wsproxy:latest
     depends_on:
         - "devops"
     environment:
@@ -116,7 +114,7 @@ services:
     logging:
         driver: "local"
   nginx:
-    image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}nginx:${REVDEBUG_DOCKER_TAG:-latest}
+    image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com}/nginx:${REVDEBUG_DOCKER_TAG:-latest}
     ports:
         - "80:80"
         - "443:443"
@@ -153,7 +151,7 @@ services:
     entrypoint: 
         - /bin/sh
         - -c 
-        - "mkdir -p /var/revdebug/keycloak ; chown -R 1000: /var/revdebug/keycloak; mkdir -p /var/revdebug/server/repo/apm_database; chown -R 1000: /var/revdebug/server/repo/apm_database"
+        - "mkdir -p /var/revdebug/keycloak ; chown -R 1000: /var/revdebug/keycloak; mkdir -p /var/revdebug/record_server/database/apm_database; chown -R 1000: /var/revdebug/record_server/database/apm_database"
     container_name: mediainit
     restart: "no"
     volumes: 
@@ -161,7 +159,7 @@ services:
     logging:
         driver: "local"
   keycloak:
-    image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com/}keycloak:${REVDEBUG_DOCKER_TAG:-latest}
+    image: ${REVDEBUG_DOCKER_REGISTRY:-docker.revdebug.com}/keycloak:${REVDEBUG_DOCKER_TAG:-latest}
     depends_on:
       mediainit:
         condition: service_completed_successfully
